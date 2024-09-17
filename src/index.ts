@@ -6,19 +6,46 @@ import bodyParser from "body-parser";
 interface User {
   id: number;
   name: string;
+  position?: string;
+  checkinAt?: number;
 }
 const app: Application = express();
 const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
-// In-memory users array
+// Dummy users
 let users: User[] = [
-  { id: 1, name: "Alice" },
-  { id: 2, name: "Bob" },
-  { id: 3, name: "Charlie" },
-  { id: 4, name: "David" },
-  { id: 5, name: "Eve" },
+  {
+    id: 1,
+    name: "John Doe",
+    position: "Software Engineer",
+    checkinAt: Date.now(),
+  },
+  {
+    id: 2,
+    name: "Jane Doe",
+    position: "Software Engineer",
+    checkinAt: Date.now(),
+  },
+  {
+    id: 3,
+    name: "Jim Doe",
+    position: "Software Engineer",
+    checkinAt: Date.now(),
+  },
+  {
+    id: 4,
+    name: "Jill Doe",
+    position: "Software Engineer",
+    checkinAt: Date.now(),
+  },
+  {
+    id: 5,
+    name: "Jack Doe",
+    position: "Software Engineer",
+    checkinAt: Date.now(),
+  },
 ];
 /**
  * Get all users
@@ -42,16 +69,19 @@ app.get("/users/:id", (req: Request, res: Response) => {
  * Create a new user
  */
 app.post("/users", (req: Request, res: Response) => {
-  const { name } = req.body;
-  if (!name) {
+  const { user } = req.body;
+  if (!user) {
+    return res.status(400).json({ message: "user is required" });
+  }
+  if (!user.name) {
     return res.status(400).json({ message: "Name is required" });
   }
   const newUser: User = {
-    id: users.length > 0 ? users[users.length - 1].id + 1 : 1,
-    name,
+    id: users.length + 1,
+    name: user.name,
+    position: user.position,
+    checkinAt: Date.now(),
   };
-  users.push(newUser);
-  res.status(201).json(newUser);
 });
 /**
  * Update an existing user
